@@ -20,6 +20,17 @@ const User = {
     const result = await db.query(SQLQuery, [id]);
     return result.rows[0];
   },
+
+  async create(name, email, password) {
+    const SQLQuery = `
+      INSERT INTO users (name, email, password)
+      VALUES ($1, $2, $3)
+      RETURNING id, name, email, created_at, updated_at
+    `;
+    const values = [name, email, password];
+    const result = await db.query(SQLQuery, values);
+    return result.rows[0];
+  },
 };
 
 export default User;
