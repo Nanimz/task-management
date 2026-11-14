@@ -10,6 +10,16 @@ const User = {
     const result = await db.query(SQLQuery, [email]);
     return result.rows[0];
   },
+
+  async findById(id) {
+    const SQLQuery = `
+      SELECT id, name, email, created_at, updated_at
+      FROM users
+      WHERE id = $1
+    `;
+    const result = await db.query(SQLQuery, [id]);
+    return result.rows[0];
+  },
 };
 
 export default User;
