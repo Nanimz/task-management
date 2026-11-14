@@ -1,0 +1,15 @@
+import db from "../config/database.mjs";
+
+const User = {
+  async findByEmail(email) {
+    const SQLQuery = `
+      SELECT id, name, email, password
+      FROM users
+      WHERE email = $1
+    `;
+    const result = await db.query(SQLQuery, [email]);
+    return result.rows[0];
+  },
+};
+
+export default User;
