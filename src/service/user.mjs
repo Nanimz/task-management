@@ -33,7 +33,7 @@ async function login(email, password) {
   }
 
   const accessToken = jwt.sign(
-    { id: user.id, email: user.email },
+    { id: existingUser.id, email: existingUser.email },
     process.env.JWT_SECRET_KEY,
     { expiresIn: process.env.JWT_EXPIRES_IN },
   );
