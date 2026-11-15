@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import User from "../models/user.mjs";
 
 const SALT_ROUNDS = 10;
@@ -16,6 +17,28 @@ async function register(name, email, password) {
   return newUser;
 }
 
-function login(email, password) {}
+async function login(email, password) {
+  const existingUser = await User.findByEmail(email);
+  if (!existingUser) {
+    const error = new Error("Email atau password salah");
+    error.statusCode = 401;
+    throw error;
+  }
 
-export { register };
+  const validPassword = await bcrypt.compare(password, existingUser.password);
+  if (!validPassword) {
+    const error = new Error("Email atau password salah");
+    error.statusCode = 401;
+    throw error;
+  }
+
+  const accessToken = jwt.sign(
+    { id: user.id, email: user.email },
+    process.env.JWT_SECRET_KEY,
+    { expiresIn: process.env.JWT_EXPIRES_IN },
+  );
+
+  return { accessToken };
+}
+
+export default { login, register };
