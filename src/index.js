@@ -6,4 +6,4 @@ const app = express();
 app.use(express.json());
 app.use("/api/v1/auth", authRoutes);
 
-app.listen(3000, () => console.log("Server berjalan di port 3000"));
+app.listen(process.env.PORT, () => console.log("Server berjalan di port 3000"));
