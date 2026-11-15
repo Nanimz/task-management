@@ -12,12 +12,34 @@ async function register(req, res) {
     const user = await userService.register(name, email, password);
     return res.status(200).json({ message: "Registrasi berhasil", data: user });
   } catch (error) {
-    return res
-      .status(error.statusCode || 500)
-      .json({
-        message: error.statusCode
-          ? error.message
-          : "Terjadi kesalahan pada server",
-      });
+    return res.status(error.statusCode || 500).json({
+      message: error.statusCode
+        ? error.message
+        : "Terjadi kesalahan pada server",
+    });
   }
 }
+
+async function login(req, res) {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Email dan password harus diisi!" });
+    }
+
+    const { accessToken } = await userService.login(email, password);
+    return res
+      .status(200)
+      .json({ message: "Login berhasil", data: { accessToken } });
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({
+      message: error.statusCode
+        ? error.message
+        : "Terjadi kesalahan pada server",
+    });
+  }
+}
+
+export default { register, login };
