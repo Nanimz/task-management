@@ -1,5 +1,4 @@
 import userService from "../service/user.mjs";
-import User from "../models/user.mjs";
 
 async function register(req, res) {
   try {
@@ -45,11 +44,21 @@ async function login(req, res) {
 
 async function getMe(req, res) {
   try {
-    const data = await User.findById(req.user.id);
-    return res.status(200).json({ status: "success", data });
+    const user = await userService.getProfile(req.user.id);
+
+    return res.status(200).json({
+      success: true,
+      data: user,
+    });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    console.error(error);
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.statusCode
+        ? error.message
+        : "Terjadi kesalahan pada server",
+    });
   }
 }
 
-export default { register, login };
+export default { register, login, getMe };
