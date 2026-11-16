@@ -41,4 +41,14 @@ async function login(email, password) {
   return { accessToken };
 }
 
-export default { login, register };
+async function getProfile(userId) {
+  const user = await User.findById(userId);
+  if (!user) {
+    const error = new Error("User tidak ditemukan");
+    error.statusCode = 404;
+    throw error;
+  }
+  return user;
+}
+
+export default { login, register, getProfile };

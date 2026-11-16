@@ -1,4 +1,5 @@
 import userService from "../service/user.mjs";
+import User from "../models/user.mjs";
 
 async function register(req, res) {
   try {
@@ -39,6 +40,15 @@ async function login(req, res) {
         ? error.message
         : "Terjadi kesalahan pada server",
     });
+  }
+}
+
+async function getMe(req, res) {
+  try {
+    const data = await User.findById(req.user.id);
+    return res.status(200).json({ status: "success", data });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
   }
 }
 
