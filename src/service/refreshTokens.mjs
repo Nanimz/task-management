@@ -44,3 +44,9 @@ async function refresh(refreshToken) {
     refreshToken: await issueRefreshToken(user.id),
   };
 }
+
+async function logout(refreshToken) {
+  await RefreshTokens.deleteByHash(hashToken(refreshToken));
+}
+
+export default { createAccessToken, issueRefreshToken, refresh, logout };
