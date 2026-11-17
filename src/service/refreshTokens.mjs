@@ -32,7 +32,7 @@ async function refresh(refreshToken) {
     throw error;
   }
 
-  const user = await User.findById(stored.user.id);
+  const user = await User.findById(stored.user_id);
   if (!user) {
     const error = new Error("User tidak ditemukan");
     error.statusCode = 401;
