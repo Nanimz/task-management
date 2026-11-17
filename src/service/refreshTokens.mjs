@@ -23,3 +23,24 @@ async function issueRefreshToken(userId) {
   await RefreshTokens.create(userId, hashToken(refreshToken), expiresAt);
   return refreshToken;
 }
+
+async function refresh(refreshToken) {
+  const stored = await RefreshTokens.consumeByHash(hashToken(refreshToken));
+  if (!stored) {
+    const error = new Error("Refresh token tidak valid atau kadaluarsa");
+    error.statusCode = 401;
+    throw error;
+  }
+
+  const user = await User.findById(stored.user.id);
+  if (!user) {
+    const error = new Error("User tidak ditemukan");
+    error.statusCode = 401;
+    throw error;
+  }
+
+  return {
+    accessToken: createAccessToken(user),
+    refreshToken: await issueRefreshToken(user.id),
+  };
+}
