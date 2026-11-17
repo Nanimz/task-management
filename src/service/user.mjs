@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import User from "../models/user.mjs";
+import tokenService from "./refreshTokens.mjs";
 
 const SALT_ROUNDS = 10;
 
@@ -31,14 +31,10 @@ async function login(email, password) {
     error.statusCode = 401;
     throw error;
   }
+  const accessToken = tokenService.createAccessToken(existingUser);
+  const refreshToken = await tokenService.issueRefreshToken(existingUser.id);
 
-  const accessToken = jwt.sign(
-    { id: existingUser.id, email: existingUser.email },
-    process.env.JWT_SECRET_KEY,
-    { expiresIn: process.env.JWT_EXPIRES_IN },
-  );
-
-  return { accessToken };
+  return { accessToken, refreshToken };
 }
 
 async function getProfile(userId) {
