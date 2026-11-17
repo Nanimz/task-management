@@ -9,4 +9,13 @@ export default {
     const values = [userId, tokenHash, expiresAt];
     await db.query(SQLQuery, values);
   },
+
+  async findHash(tokenHash) {
+    const SQLQuery = `
+      SELECT * FROM refresh_tokens
+      WHERE token_hash = $1 AND expires_at > NOW()
+    `;
+    const result = await db.query(SQLQuery, tokenHash);
+    return result.rows[0];
+  },
 };
