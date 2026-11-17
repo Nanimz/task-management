@@ -15,7 +15,15 @@ export default {
       SELECT * FROM refresh_tokens
       WHERE token_hash = $1 AND expires_at > NOW()
     `;
-    const result = await db.query(SQLQuery, tokenHash);
+    const result = await db.query(SQLQuery, [tokenHash]);
     return result.rows[0];
+  },
+
+  async deleteByHash(tokenHash) {
+    const SQLQuery = `
+      DELETE FROM refresh_tokens
+      WHERE token_hash = $1
+    `;
+    await db.query(SQLQuery, [tokenHash]);
   },
 };
