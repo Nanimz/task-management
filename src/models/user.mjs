@@ -31,6 +31,18 @@ const User = {
     const result = await db.query(SQLQuery, values);
     return result.rows[0];
   },
+
+  async update(id, name, email) {
+    const SQLQuery = `
+      UPDATE users
+      SET name = $1, email = $2, updated_at = NOW()
+      WHERE id = $3
+      RETURNING id, name, email, created_at, updated_at
+    `;
+    const values = [name, email, id];
+    const result = await db.query(SQLQuery, values);
+    return result.rows[0];
+  },
 };
 
 export default User;
