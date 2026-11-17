@@ -48,11 +48,13 @@ async function getProfile(userId) {
 }
 
 async function updateProfile(userId, name, email) {
-  const existing = await User.findByEmail(email);
-  if (existing && existing.id !== userId) {
-    const error = new Error("Email sudah digunakan");
-    error.statusCode = 409;
-    throw error;
+  if (email) {
+    const existing = await User.findByEmail(email);
+    if (existing && existing.id !== userId) {
+      const error = new Error("Email sudah digunakan");
+      error.statusCode = 409;
+      throw error;
+    }
   }
   const updatedUser = await User.update(userId, name, email);
   if (!updatedUser) {
