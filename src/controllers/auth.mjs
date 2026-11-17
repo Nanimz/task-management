@@ -29,10 +29,13 @@ async function login(req, res) {
         .json({ message: "Email dan password harus diisi!" });
     }
 
-    const { accessToken } = await userService.login(email, password);
+    const { accessToken, refreshToken } = await userService.login(
+      email,
+      password,
+    );
     return res
       .status(200)
-      .json({ message: "Login berhasil", data: { accessToken } });
+      .json({ message: "Login berhasil", data: { accessToken, refreshToken } });
   } catch (error) {
     return res.status(error.statusCode || 500).json({
       message: error.statusCode
