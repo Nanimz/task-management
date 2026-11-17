@@ -83,4 +83,22 @@ async function refresh(req, res) {
   }
 }
 
-export default { register, login, getMe };
+async function logout(req, res) {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Refresh token wajib ada" });
+    }
+    await tokenService.logout(refreshToken);
+    return res.status(200).json({ success: true, message: "Logout berhasil" });
+  } catch (error) {
+    return res.status(error.statusCode).json({
+      success: false,
+      message: error.statusCode ? error.message : "Terjadi kesalahan di server",
+    });
+  }
+}
+
+export default { register, login, getMe, refresh, logout };
