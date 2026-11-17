@@ -35,11 +35,13 @@ const User = {
   async update(id, name, email) {
     const SQLQuery = `
       UPDATE users
-      SET name = $1, email = $2, updated_at = NOW()
+      SET name = COALESCE($1, name),
+          email = COALESCE($2, email),
+          updated_at = NOW()
       WHERE id = $3
       RETURNING id, name, email, created_at, updated_at
     `;
-    const values = [name, email, id];
+    const values = [name ?? null, email ?? null, id];
     const result = await db.query(SQLQuery, values);
     return result.rows[0];
   },
