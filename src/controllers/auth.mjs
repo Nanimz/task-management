@@ -82,4 +82,4 @@ async function logout(req, res) {
   }
 }
 
-export default { register, login, getMe, refresh, logout };
+export default { register, login, refresh, logout };
