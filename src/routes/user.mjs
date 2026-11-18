@@ -6,5 +6,6 @@ const router = Router();
 router.use(authMiddleware.authenticate);
 router.get("/me", userController.getMe);
 router.patch("/me", userController.updateUserProfile);
+router.patch("/me/password", userController.updateUserPassword);
 
 export default router;
