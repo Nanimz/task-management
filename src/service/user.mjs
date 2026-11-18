@@ -65,4 +65,23 @@ async function updateProfile(userId, name, email) {
   return updatedUser;
 }
 
-export default { login, register, getProfile, updateProfile };
+async function changePassword(userId, oldPassword, newPassword) {
+  const user = await User.findByIdWithPassword(userId);
+  if (!user) {
+    const error = new Error("User tidak ditemukan");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const valid = await bcrypt.compare(oldPassword, user.password);
+  if (!valid) {
+    const error = new Error("Old password salah");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
+  await User.updatePassword(userId, hashedPassword);
+}
+
+export default { login, register, getProfile, updateProfile, changePassword };
