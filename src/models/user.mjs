@@ -66,6 +66,16 @@ const User = {
     const values = [newPassword, id];
     await db.query(SQLQuery, values);
   },
+
+  async delete(id) {
+    const SQLQuery = `
+      DELETE users
+      WHERE id = $1
+      RETURNING id, name, email
+    `;
+    const result = await db.query(SQLQuery, [id]);
+    return result.rows[0];
+  },
 };
 
 export default User;
