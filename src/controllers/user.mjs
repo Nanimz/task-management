@@ -1,4 +1,24 @@
 import userService from "../service/user.mjs";
+
+async function getMe(req, res) {
+  try {
+    const user = await userService.getProfile(req.user.id);
+
+    return res.status(200).json({
+      success: true,
+      data: user,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.statusCode
+        ? error.message
+        : "Terjadi kesalahan pada server",
+    });
+  }
+}
+
 async function updateUserProfile(req, res) {
   try {
     const { name, email } = req.body;
@@ -67,4 +87,4 @@ async function updateUserPassword(req, res) {
   }
 }
 
-export default { updateUserProfile, updateUserPassword };
+export default { getMe, updateUserProfile, updateUserPassword };
