@@ -84,4 +84,30 @@ async function changePassword(userId, oldPassword, newPassword) {
   await User.updatePassword(userId, hashedPassword);
 }
 
-export default { login, register, getProfile, updateProfile, changePassword };
+async function deleteUser(userId, password) {
+  const user = await User.findByIdWithPassword(userId);
+  if (!user) {
+    const error = new Error("User tidak ditemukan");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const valid = await bcrypt.compare(password, user.password);
+  if (!valid) {
+    const error = new Error("Password salah");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const data = await User.delete(user.id);
+  return data;
+}
+
+export default {
+  login,
+  register,
+  getProfile,
+  updateProfile,
+  changePassword,
+  deleteUser,
+};
