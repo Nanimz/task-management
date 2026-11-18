@@ -5,6 +5,7 @@ const Task = {
     const SQLQuery = `
       INSERT INTO tasks (user_id, title, description, status, priority, due_date)
       VALUES ($1, $2, $3, COALESCE($4, 'pending'), COALESCE($5, 'medium') $6)
+      RETURNING *
     `;
     const values = [
       userId,
