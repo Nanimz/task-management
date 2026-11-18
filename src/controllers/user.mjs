@@ -101,7 +101,7 @@ async function deleteAccount(req, res) {
     if (id && !password) {
       return res
         .status(400)
-        .json({ success: false, message: "Password salah" });
+        .json({ success: false, message: "Password harus diisi" });
     }
 
     const data = await userService.deleteUser(id, password);
