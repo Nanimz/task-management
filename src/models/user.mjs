@@ -45,6 +45,17 @@ const User = {
     const result = await db.query(SQLQuery, values);
     return result.rows[0];
   },
+
+  async updatePassword(id, newPassword) {
+    const SQLQuery = `
+      UPDATE users
+      SET password = $1,
+          updated_at = NOW()
+      WHERE id = $2
+    `;
+    const values = [newPassword, id];
+    await db.query(SQLQuery, values);
+  },
 };
 
 export default User;
