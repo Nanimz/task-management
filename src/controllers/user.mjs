@@ -33,4 +33,38 @@ async function updateUserProfile(req, res) {
   }
 }
 
-export default { updateUserProfile };
+async function updateUserPassword(req, res) {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    if (!oldPassword || !newPassword) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Password harus diisi" });
+    }
+
+    if (typeof oldPassword !== "string" || typeof newPassword !== "string") {
+      return res
+        .status(400)
+        .json({ success: false, message: "Password harus berupa teks" });
+    }
+    if (newPassword.length < 8) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Password minimal 8 karakter" });
+    }
+
+    await userService.changePassword(req.user.id, oldPassword, newPassword);
+    return res
+      .status(200)
+      .json({ success: true, message: "Password berhasil diperbarui" });
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.statusCode
+        ? error.message
+        : "Terjadi kesalahan pada server",
+    });
+  }
+}
+
+export default { updateUserProfile, updateUserPassword };
