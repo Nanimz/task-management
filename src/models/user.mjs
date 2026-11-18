@@ -21,6 +21,16 @@ const User = {
     return result.rows[0];
   },
 
+  async findByIdWithPassword(id) {
+    const SQLQuery = `
+      SELECT id, name, password
+      FROM users
+      WHERE id = $1
+    `;
+    const result = await db.query(SQLQuery, [id]);
+    return result.rows[0];
+  },
+
   async create(name, email, password) {
     const SQLQuery = `
       INSERT INTO users (name, email, password)
