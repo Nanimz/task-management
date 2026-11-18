@@ -69,7 +69,7 @@ const User = {
 
   async delete(id) {
     const SQLQuery = `
-      DELETE users
+      DELETE FROM users
       WHERE id = $1
       RETURNING id, name, email
     `;
