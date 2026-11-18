@@ -87,4 +87,35 @@ async function updateUserPassword(req, res) {
   }
 }
 
-export default { getMe, updateUserProfile, updateUserPassword };
+async function deleteAccount(req, res) {
+  try {
+    const { id } = req.user;
+    const { password } = req.body;
+
+    if (!id) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Harus menyertakan userId" });
+    }
+
+    if (id && !password) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Password salah" });
+    }
+
+    const data = await userService.deleteUser(id, password);
+    return res
+      .status(200)
+      .json({ success: true, message: "Data user berhasil dihapus", data });
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.statusCode
+        ? error.message
+        : "Terjadi kesalahan pada server",
+    });
+  }
+}
+
+export default { getMe, updateUserProfile, updateUserPassword, deleteAccount };
