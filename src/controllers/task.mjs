@@ -101,4 +101,32 @@ async function updateTaskDetail(req, res) {
   }
 }
 
-export default { createTask, getTasks, getTaskById, updateTaskDetail };
+async function removeTask(req, res) {
+  try {
+    const { id: userId } = req.user;
+    const taskId = Number(req.params.id);
+    if (!Number.isInteger(taskId) || taskId <= 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Task ID tidak valid" });
+    }
+
+    const task = await taskService.deleteTask(taskId, userId);
+    return res.status(200).json({ success: true, data: task });
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.statusCode
+        ? error.message
+        : "Terjadi kesalahan pada server",
+    });
+  }
+}
+
+export default {
+  createTask,
+  getTasks,
+  getTaskById,
+  updateTaskDetail,
+  removeTask,
+};
