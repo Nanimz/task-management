@@ -66,7 +66,39 @@ async function getTaskById(req, res) {
 }
 
 async function updateTaskDetail(req, res) {
-  const { title, description, status, priority, due_date } = req.body;
+  try {
+    const fields = ["title", "description", "status", "priority", "due_date"];
+    if (!fields.some((f) => req.body[f] !== undefined)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Tidak ada data yang diubah" });
+    }
+
+    const err = validateTask(req.body, { partial: true });
+    if (err) {
+      res.status(400).json({ success: false, message: err });
+    }
+
+    const { title, description, status, priority, due_date } = req.body;
+    const task = await taskService.updateTask(req.params.id, req.user.id, {
+      title: title?.trim(),
+      description,
+      status,
+      priority,
+      due_date,
+    });
+
+    return res
+      .status(201)
+      .json({ success: true, message: "Task berhasil diupdate", data: task });
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.statusCode
+        ? error.message
+        : "Terjadi kesalahan pada server",
+    });
+  }
 }
 
 export default { createTask, getTasks, getTaskById, updateTaskDetail };
