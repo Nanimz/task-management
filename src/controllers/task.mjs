@@ -63,4 +63,19 @@ async function createTask(req, res) {
   }
 }
 
-export default { createTask };
+async function getTasks(req, res) {
+  try {
+    const { id } = req.user;
+    const tasks = await taskService.getAllTasks(id);
+    return res.status(200).json({ success: true, data: tasks });
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.statusCode
+        ? error.message
+        : "Terjadi kesalahan pada server",
+    });
+  }
+}
+
+export default { createTask, getTasks };
