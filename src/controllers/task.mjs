@@ -34,10 +34,10 @@ async function createTask(req, res) {
       });
     }
 
-    if (due_date !== undefined && !/^\d{4}-\d{2}-\d{2}$/.test(due_date)) {
+    if (due_date === undefined || !/^\d{4}-\d{2}-\d{2}$/.test(due_date)) {
       return res.status(400).json({
         success: false,
-        message: "Due date harus berformat YYYY-MM-DD",
+        message: "Due date wajib diisi dan harus berformat YYYY-MM-DD",
       });
     }
 
