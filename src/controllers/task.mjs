@@ -8,9 +8,10 @@ async function createTask(req, res) {
     const { title, description, status, priority, due_date } = req.body;
 
     if (typeof title !== "string" || !title.trim()) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Title harus diisi" });
+      return res.status(400).json({
+        success: false,
+        message: "Title harus berupa string dan harus diisi",
+      });
     }
 
     if (title.trim().length > 150) {
