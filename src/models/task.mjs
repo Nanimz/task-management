@@ -69,6 +69,17 @@ const Task = {
     const result = await db.query(SQLQuery, values);
     return result.rows[0];
   },
+
+  async delete(taskId, userId) {
+    const SQLQuery = `
+      DELETE FROM tasks
+      WHERE id = $1 AND user_id = $2
+      RETURNING *
+    `;
+    const values = [taskId, userId];
+    const result = await db.query(SQLQuery, values);
+    return result.rows[0];
+  },
 };
 
 export default Task;
