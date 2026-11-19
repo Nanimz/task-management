@@ -1,0 +1,65 @@
+import taskService from "../service/task.mjs";
+
+const STATUSES = ["pending", "in_progress", "completed"];
+const PRIORITIES = ["low", "medium", "high"];
+
+async function createTask(req, res) {
+  try {
+    const { title, description, status, priority, due_date } = req.body;
+
+    if (typeof title !== "string" || !title.trim()) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Title harus diisi" });
+    }
+
+    if (title.trim().length > 150) {
+      return res.status(400).json({
+        success: false,
+        message: "Title tidak boleh lebih dari 150 karakter",
+      });
+    }
+
+    if (status !== undefined && !STATUSES.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: `Status harus salah satu dari:  ${STATUSES.join(", ")}`,
+      });
+    }
+
+    if (priority !== undefined && !PRIORITIES.includes(priority)) {
+      return res.status(400).json({
+        success: false,
+        message: `Prioritas harus salah satu dari: ${PRIORITIES.join(", ")}`,
+      });
+    }
+
+    if (due_date !== undefined && !/^\d{4}-\d{2}-\d{2}$/.test(due_date)) {
+      return res.status(400).json({
+        success: false,
+        message: "Due date harus berformat YYYY-MM-DD",
+      });
+    }
+
+    const task = await taskService.addTask(req.user.id, {
+      title: title.trim(),
+      description,
+      status,
+      priority,
+      due_date,
+    });
+
+    return res
+      .status(201)
+      .json({ success: true, message: "Task berhasil dibuat", data: task });
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.statusCode
+        ? error.message
+        : "Terjadi kesalahan pada server",
+    });
+  }
+}
+
+export default { createTask };
