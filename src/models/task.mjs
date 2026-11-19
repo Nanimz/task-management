@@ -18,6 +18,17 @@ const Task = {
     const result = await db.query(SQLQuery, values);
     return result.rows[0];
   },
+
+  async getAllByUserId(userId) {
+    const SQLQuery = `
+      SELECT * 
+      FROM tasks
+      WHERE user_id = $1
+      ORDER BY created_at DESC
+    `;
+    const result = await db.query(SQLQuery, [userId]);
+    return result.rows;
+  },
 };
 
 export default Task;
