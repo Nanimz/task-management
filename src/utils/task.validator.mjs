@@ -1,4 +1,4 @@
-export const STATUSES = ["todo", "in_progress", "done"];
+export const STATUSES = ["pending", "in_progress", "done"];
 export const PRIORITIES = ["low", "medium", "high"];
 
 export function validateTask(data, { partial = false } = {}) {
