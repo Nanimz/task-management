@@ -38,4 +38,14 @@ async function updateTask(taskId, userId, data) {
   return task;
 }
 
-export default { addTask, getAllTasks, getTaskById, updateTask };
+async function deleteTask(taskId, userId) {
+  const task = await Task.delete(taskId, userId);
+  if (!task) {
+    const error = new Error("Task tidak ditemukan");
+    error.statusCode = 404;
+    throw error;
+  }
+  return task;
+}
+
+export default { addTask, getAllTasks, getTaskById, updateTask, deleteTask };
