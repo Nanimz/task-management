@@ -81,12 +81,12 @@ async function getTasks(req, res) {
 async function getTaskById(req, res) {
   try {
     const taskId = Number(req.params.id);
-    if (!Number.isInteger(id) || taskId <= 0) {
+    if (!Number.isInteger(taskId) || taskId <= 0) {
       return res
         .status(400)
         .json({ success: false, message: "ID task tidak valid" });
     }
-    const data = await taskService.getTaskById(id, req.user.id);
+    const data = await taskService.getTaskById(taskId, req.user.id);
     return res.status(200).json({ success: true, data });
   } catch (error) {
     return res.status(error.statusCode || 500).json({
