@@ -13,9 +13,9 @@ async function addTask(userId, data) {
   return task;
 }
 
-async function getTasks(userId) {
+async function getAllTasks(userId) {
   const tasks = await Task.getAllByUserId(userId);
   return tasks;
 }
 
-export default { addTask, getTasks };
+export default { addTask, getAllTasks };
