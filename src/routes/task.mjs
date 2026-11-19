@@ -8,5 +8,6 @@ router.use(authMiddleware.authenticate);
 
 router.post("/", taskController.createTask);
 router.get("/", taskController.getTasks);
+router.get("/:id", taskController.getTaskById);
 
 export default router;
