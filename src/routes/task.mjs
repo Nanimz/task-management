@@ -7,5 +7,6 @@ const router = Router();
 router.use(authMiddleware.authenticate);
 
 router.post("/", taskController.createTask);
+router.get("/", taskController.getTasks);
 
 export default router;
