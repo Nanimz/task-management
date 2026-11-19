@@ -18,4 +18,14 @@ async function getAllTasks(userId) {
   return tasks;
 }
 
-export default { addTask, getAllTasks };
+async function getTaskById(taskId, userId) {
+  const task = await Task.getTaskById(taskId, userId);
+  if (!task) {
+    const error = new Error("Task tidak ditemukan");
+    error.statusCode = 404;
+    throw error;
+  }
+  return task;
+}
+
+export default { addTask, getAllTasks, getTaskById };

@@ -29,6 +29,17 @@ const Task = {
     const result = await db.query(SQLQuery, [userId]);
     return result.rows;
   },
+
+  async getTaskById(taskId, userId) {
+    const SQLQuery = `
+      SELECT *
+      FROM tasks
+      WHERE id = $1 AND user_id = $2
+    `;
+    const values = [taskId, userId];
+    const result = await db.query(SQLQuery, values);
+    return result.rows[0];
+  },
 };
 
 export default Task;
