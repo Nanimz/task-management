@@ -1,8 +1,8 @@
-import { Route } from "express";
+import { Router } from "express";
 import authMiddleware from "../middlewares/auth.mjs";
 import taskController from "../controllers/task.mjs";
 
-const router = Route();
+const router = Router();
 
 router.use(authMiddleware.authenticate);
 
