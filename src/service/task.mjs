@@ -53,6 +53,11 @@ async function searchTasks(userId, title) {
   return tasks;
 }
 
+async function tasksFilteredStatus(userId, status) {
+  const tasks = await Task.filterByStatus(userId, status);
+  return tasks;
+}
+
 export default {
   addTask,
   getAllTasks,
@@ -60,4 +65,5 @@ export default {
   updateTask,
   deleteTask,
   searchTasks,
+  tasksFilteredStatus,
 };
