@@ -58,6 +58,11 @@ async function tasksFilteredStatus(userId, status) {
   return tasks;
 }
 
+async function tasksFilteredPriority(userId, priority) {
+  const tasks = await Task.filterByPriority(userId, priority);
+  return tasks;
+}
+
 export default {
   addTask,
   getAllTasks,
@@ -66,4 +71,5 @@ export default {
   deleteTask,
   searchTasks,
   tasksFilteredStatus,
+  tasksFilteredPriority,
 };
