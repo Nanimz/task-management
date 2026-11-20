@@ -102,6 +102,17 @@ const Task = {
     const result = await db.query(SQLQuery, values);
     return result.rows;
   },
+
+  async filterByPriority(userId, priority) {
+    const SQLQuery = `
+      SELECT * FROM tasks
+      WHERE user_id = $1 AND priority = $2
+      ORDER BY created_at ASC
+    `;
+    const values = [userId, priority];
+    const result = await db.query(SQLQuery, values);
+    return result.rows;
+  },
 };
 
 export default Task;
