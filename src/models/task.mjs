@@ -80,6 +80,17 @@ const Task = {
     const result = await db.query(SQLQuery, values);
     return result.rows[0];
   },
+
+  async search(userId, title) {
+    const SQLQuery = `
+      SELECT * FROM tasks
+      WHERE user_id = $1 AND title ILIKE $2
+      ORDER BY created_at DESC
+    `;
+    const values = [userId, `%${title}%`];
+    const result = await db.query(SQLQuery, values);
+    return result.rows;
+  },
 };
 
 export default Task;
