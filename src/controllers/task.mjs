@@ -1,5 +1,5 @@
 import taskService from "../service/task.mjs";
-import { validateTask } from "../utils/task.validator.mjs";
+import { STATUSES, validateTask } from "../utils/task.validator.mjs";
 
 async function createTask(req, res) {
   try {
@@ -33,21 +33,31 @@ async function createTask(req, res) {
 async function getTasks(req, res) {
   try {
     const { id } = req.user;
-    const { title } = req.query;
+    const { title, status } = req.query;
 
-    if (title === undefined) {
-      const tasks = await taskService.getAllTasks(id);
+    if (title !== undefined) {
+      if (typeof title !== "string" || !title.trim()) {
+        return res.status(400).json({
+          success: false,
+          message: "Query title harus berupa teks dan tidak boleh kosong",
+        });
+      }
+      const tasks = await taskService.searchTasks(id, title.trim());
       return res.status(200).json({ success: true, data: tasks });
     }
 
-    if (typeof title !== "string" || !title.trim()) {
-      return res.status(400).json({
-        success: false,
-        message: "Query title harus berupa teks dan tidak boleh kosong",
-      });
+    if (status !== undefined) {
+      if (!STATUSES.includes(status)) {
+        return res.status(400).json({
+          success: false,
+          message: `Status harus salah satu dari ${STATUSES.join(", ")}`,
+        });
+      }
+      const tasks = await taskService.tasksFilteredStatus(id, status);
+      return res.status(200).json({ success: true, data: tasks });
     }
 
-    const tasks = await taskService.searchTasks(id, title);
+    const tasks = await taskService.getAllTasks(id);
     return res.status(200).json({ success: true, data: tasks });
   } catch (error) {
     return res.status(error.statusCode || 500).json({
