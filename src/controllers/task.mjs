@@ -33,7 +33,21 @@ async function createTask(req, res) {
 async function getTasks(req, res) {
   try {
     const { id } = req.user;
-    const tasks = await taskService.getAllTasks(id);
+    const { title } = req.query;
+
+    if (title === undefined) {
+      const tasks = await taskService.getAllTasks(id);
+      return res.status(200).json({ success: true, data: tasks });
+    }
+
+    if (typeof title !== "string" || !title.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Query title harus berupa teks dan tidak boleh kosong",
+      });
+    }
+
+    const tasks = await taskService.searchTasks(id, title);
     return res.status(200).json({ success: true, data: tasks });
   } catch (error) {
     return res.status(error.statusCode || 500).json({
@@ -123,34 +137,10 @@ async function removeTask(req, res) {
   }
 }
 
-async function searchUserTask(req, res) {
-  try {
-    const { id } = req.user;
-    const { title } = req.params;
-
-    if (typeof title !== "string" || !title.trim()) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Query title wajib diisi" });
-    }
-
-    const tasks = await taskService.searchTasks(id, title.trim());
-    return res.status(200).json({ success: true, data: tasks });
-  } catch (error) {
-    return res.status(error.statusCode || 500).json({
-      success: false,
-      message: error.statusCode
-        ? error.message
-        : "Terjadi kesalahan pada server",
-    });
-  }
-}
-
 export default {
   createTask,
   getTasks,
   getTaskById,
   updateTaskDetail,
   removeTask,
-  searchUserTask,
 };
