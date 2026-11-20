@@ -48,4 +48,16 @@ async function deleteTask(taskId, userId) {
   return task;
 }
 
-export default { addTask, getAllTasks, getTaskById, updateTask, deleteTask };
+async function searchTasks(userId, title) {
+  const tasks = await Task.search(userId, title);
+  return tasks;
+}
+
+export default {
+  addTask,
+  getAllTasks,
+  getTaskById,
+  updateTask,
+  deleteTask,
+  searchTasks,
+};
