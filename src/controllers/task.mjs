@@ -1,5 +1,9 @@
 import taskService from "../service/task.mjs";
-import { STATUSES, validateTask } from "../utils/task.validator.mjs";
+import {
+  PRIORITIES,
+  STATUSES,
+  validateTask,
+} from "../utils/task.validator.mjs";
 
 async function createTask(req, res) {
   try {
@@ -33,7 +37,7 @@ async function createTask(req, res) {
 async function getTasks(req, res) {
   try {
     const { id } = req.user;
-    const { title, status } = req.query;
+    const { title, status, priority } = req.query;
 
     if (title !== undefined) {
       if (typeof title !== "string" || !title.trim()) {
@@ -54,6 +58,17 @@ async function getTasks(req, res) {
         });
       }
       const tasks = await taskService.tasksFilteredStatus(id, status);
+      return res.status(200).json({ success: true, data: tasks });
+    }
+
+    if (priority !== undefined) {
+      if (!PRIORITIES.includes(priority)) {
+        return res.status(400).json({
+          success: false,
+          message: `Priority harus salah satu dari ${PRIORITIES.join(", ")}`,
+        });
+      }
+      const tasks = await taskService.tasksFilteredPriority(id, priority);
       return res.status(200).json({ success: true, data: tasks });
     }
 
