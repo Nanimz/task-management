@@ -1,5 +1,6 @@
 export const STATUSES = ["pending", "in_progress", "completed"];
 export const PRIORITIES = ["low", "medium", "high"];
+export const SORTABLE = ["created_at, updated_at, due_date, title, priority"];
 
 export function validateTask(data, { partial = false } = {}) {
   const { title, status, priority, due_date } = data;

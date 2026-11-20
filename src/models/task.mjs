@@ -113,6 +113,17 @@ const Task = {
     const result = await db.query(SQLQuery, values);
     return result.rows;
   },
+
+  async sortTasks(userId, sort = "created_at", order = "desc") {
+    const direction = order === "asc" ? "ASC" : "DESC";
+    const SQLQuery = `
+      SELECT * FROM tasks
+      WHERE user_id = $1
+      ORDER BY ${sort} ${direction}
+    `;
+    const result = await db.query(SQLQuery, [userId]);
+    return result.rows;
+  },
 };
 
 export default Task;
