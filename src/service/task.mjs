@@ -68,6 +68,12 @@ async function sortUserTasks(userId, sort, order) {
   return tasks;
 }
 
+async function getAllTask(userId, options) {
+  const { tasks, total } = await Task.findAll(userId, options);
+  const { limit = 10 } = options;
+  return { tasks, totalPages: Math.ceil(total / limit) };
+}
+
 export default {
   addTask,
   getAllTasks,
@@ -78,4 +84,5 @@ export default {
   tasksFilteredStatus,
   tasksFilteredPriority,
   sortUserTasks,
+  getAllTask,
 };
