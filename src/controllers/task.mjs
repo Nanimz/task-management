@@ -1,6 +1,7 @@
 import taskService from "../service/task.mjs";
 import {
   PRIORITIES,
+  SORTABLE,
   STATUSES,
   validateTask,
 } from "../utils/task.validator.mjs";
@@ -37,7 +38,7 @@ async function createTask(req, res) {
 async function getTasks(req, res) {
   try {
     const { id } = req.user;
-    const { title, status, priority } = req.query;
+    const { title, status, priority, sortBy, order } = req.query;
 
     if (title !== undefined) {
       if (typeof title !== "string" || !title.trim()) {
@@ -70,6 +71,23 @@ async function getTasks(req, res) {
       }
       const tasks = await taskService.tasksFilteredPriority(id, priority);
       return res.status(200).json({ success: true, data: tasks });
+    }
+
+    if (sortBy !== undefined) {
+      if (!SORTABLE.includes(sortBy)) {
+        return res.status(400).json({
+          success: false,
+          message: `Penugurutan harus berdasarkan salah satu dari ${SORTABLE.join(", ")}`,
+        });
+      }
+      if (order !== undefined && !["asc", "desc"].includes(order)) {
+        return res.status(400).json({
+          success: false,
+          message: "Order harus bernilai asc atau desc",
+        });
+      }
+      const tasks = await taskService.sortUserTasks(id, sortBy, order);
+      res.status(200).json({ success: true, data: tasks });
     }
 
     const tasks = await taskService.getAllTasks(id);
