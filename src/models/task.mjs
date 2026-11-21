@@ -106,7 +106,7 @@ const Task = {
     const orderExpr =
       sortBy === "priority"
         ? "CASE priority WHEN 'low' THEN 1 WHEN 'medium' THEN 2 WHEN 'high' THEN 3 END"
-        : sort;
+        : sortBy;
 
     const countResult = await db.query(
       "SELECT COUNT(*) FROM tasks WHERE ${where}",
