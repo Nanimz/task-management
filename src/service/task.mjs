@@ -63,6 +63,11 @@ async function tasksFilteredPriority(userId, priority) {
   return tasks;
 }
 
+async function sortUserTasks(userId, sort, order) {
+  const tasks = await Task.sortTasks(userId, sort, order);
+  return tasks;
+}
+
 export default {
   addTask,
   getAllTasks,
@@ -72,4 +77,5 @@ export default {
   searchTasks,
   tasksFilteredStatus,
   tasksFilteredPriority,
+  sortUserTasks,
 };
