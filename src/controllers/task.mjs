@@ -40,59 +40,73 @@ async function getTasks(req, res) {
     const { id } = req.user;
     const { title, status, priority, sortBy, order } = req.query;
 
-    if (title !== undefined) {
-      if (typeof title !== "string" || !title.trim()) {
-        return res.status(400).json({
-          success: false,
-          message: "Query title harus berupa teks dan tidak boleh kosong",
-        });
-      }
-      const tasks = await taskService.searchTasks(id, title.trim());
-      return res.status(200).json({ success: true, data: tasks });
+    if (title !== undefined && (typeof title !== "string" || !title.trim())) {
+      return res.status(400).json({
+        success: false,
+        message: "Title harus berupa teks dan tidak boleh kosong",
+      });
     }
 
-    if (status !== undefined) {
-      if (!STATUSES.includes(status)) {
-        return res.status(400).json({
-          success: false,
-          message: `Status harus salah satu dari ${STATUSES.join(", ")}`,
-        });
-      }
-      const tasks = await taskService.tasksFilteredStatus(id, status);
-      return res.status(200).json({ success: true, data: tasks });
+    if (status !== undefined && !STATUSES.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: `Status harus berupa salah satu dari: ${STATUSES.join(", ")}`,
+      });
     }
 
-    if (priority !== undefined) {
-      if (!PRIORITIES.includes(priority)) {
-        return res.status(400).json({
-          success: false,
-          message: `Priority harus salah satu dari ${PRIORITIES.join(", ")}`,
-        });
-      }
-      const tasks = await taskService.tasksFilteredPriority(id, priority);
-      return res.status(200).json({ success: true, data: tasks });
+    if (priority !== undefined && !PRIORITIES.includes(priority)) {
+      return res.status(400).json({
+        success: false,
+        message: `Priority harus berupa salah satu dari: ${PRIORITIES.join(", ")}`,
+      });
     }
 
-    if (sortBy !== undefined) {
-      if (!SORTABLE.includes(sortBy)) {
-        return res.status(400).json({
-          success: false,
-          message: `Penugurutan harus berdasarkan salah satu dari ${SORTABLE.join(", ")}`,
-        });
-      }
-      if (order !== undefined && !["asc", "desc"].includes(order)) {
-        return res.status(400).json({
-          success: false,
-          message: "Order harus bernilai asc atau desc",
-        });
-      }
-      const tasks = await taskService.sortUserTasks(id, sortBy, order);
-      res.status(200).json({ success: true, data: tasks });
+    if (sortBy !== undefined && !SORTABLE.includes(sortBy)) {
+      return res.status(400).json({
+        success: false,
+        message: `SortBy harus berupa salah satu dari: ${SORTABLE.join(", ")}`,
+      });
     }
 
-    const tasks = await taskService.getAllTasks(id);
-    return res.status(200).json({ success: true, data: tasks });
+    if (order !== undefined && !["asc", "desc"].includes(order)) {
+      return res.status(400).json({
+        success: false,
+        message: `Order harus berupa asc atau desc`,
+      });
+    }
+
+    const page = req.query.page === undefined ? 1 : Number(req.query.page);
+    const limit = req.query.limit === undefined ? 10 : Number(req.query.limit);
+
+    if (!Number.isInteger(page) || page < 1) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Page harus bilangan bulat >= 1" });
+    }
+
+    if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Limit harus bilangan bulat 1-100" });
+    }
+
+    const { tasks, total, totalPages } = await taskService.getAllTasks(id, {
+      title: title?.trim(),
+      status,
+      priority,
+      sortBy,
+      order,
+      page,
+      limit,
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: tasks,
+      pagination: { page, limit, total, totalPages },
+    });
   } catch (error) {
+    console.error(error);
     return res.status(error.statusCode || 500).json({
       success: false,
       message: error.statusCode
