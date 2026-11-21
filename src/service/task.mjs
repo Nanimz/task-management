@@ -46,7 +46,7 @@ async function deleteTask(taskId, userId) {
 async function getAllTasks(userId, options) {
   const { tasks, total } = await Task.findAll(userId, options);
   const { limit = 10 } = options;
-  return { tasks, totalPages: Math.ceil(total / limit) };
+  return { tasks, total, totalPages: Math.ceil(total / limit) };
 }
 
 export default {
