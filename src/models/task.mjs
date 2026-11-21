@@ -19,17 +19,6 @@ const Task = {
     return result.rows[0];
   },
 
-  async getAllByUserId(userId) {
-    const SQLQuery = `
-      SELECT * 
-      FROM tasks
-      WHERE user_id = $1
-      ORDER BY created_at DESC
-    `;
-    const result = await db.query(SQLQuery, [userId]);
-    return result.rows;
-  },
-
   async getTaskById(taskId, userId) {
     const SQLQuery = `
       SELECT *
@@ -79,54 +68,6 @@ const Task = {
     const values = [taskId, userId];
     const result = await db.query(SQLQuery, values);
     return result.rows[0];
-  },
-
-  async search(userId, title) {
-    const SQLQuery = `
-      SELECT * FROM tasks
-      WHERE user_id = $1 AND title ILIKE $2
-      ORDER BY created_at DESC
-    `;
-    const values = [userId, `%${title}%`];
-    const result = await db.query(SQLQuery, values);
-    return result.rows;
-  },
-
-  async filterByStatus(userId, status) {
-    const SQLQuery = `
-      SELECT * FROM tasks
-      WHERE user_id = $1 AND status = $2
-      ORDER BY created_at DESC
-    `;
-    const values = [userId, status];
-    const result = await db.query(SQLQuery, values);
-    return result.rows;
-  },
-
-  async filterByPriority(userId, priority) {
-    const SQLQuery = `
-      SELECT * FROM tasks
-      WHERE user_id = $1 AND priority = $2
-      ORDER BY created_at ASC
-    `;
-    const values = [userId, priority];
-    const result = await db.query(SQLQuery, values);
-    return result.rows;
-  },
-
-  async sortTasks(userId, sort = "created_at", order = "desc") {
-    const direction = order === "asc" ? "ASC" : "DESC";
-    const orderExpr =
-      sort === "priority"
-        ? "CASE priority WHEN 'low' THEN 1 WHEN 'medium' THEN 2 WHEN 'high' THEN 3 END"
-        : sort;
-    const SQLQuery = `
-      SELECT * FROM tasks
-      WHERE user_id = $1
-      ORDER BY ${orderExpr} ${direction}
-    `;
-    const result = await db.query(SQLQuery, [userId]);
-    return result.rows;
   },
 
   async findAll(
