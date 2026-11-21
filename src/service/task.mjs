@@ -13,11 +13,6 @@ async function addTask(userId, data) {
   return task;
 }
 
-async function getAllTasks(userId) {
-  const tasks = await Task.getAllByUserId(userId);
-  return tasks;
-}
-
 async function getTaskById(taskId, userId) {
   const task = await Task.getTaskById(taskId, userId);
   if (!task) {
@@ -48,27 +43,7 @@ async function deleteTask(taskId, userId) {
   return task;
 }
 
-async function searchTasks(userId, title) {
-  const tasks = await Task.search(userId, title);
-  return tasks;
-}
-
-async function tasksFilteredStatus(userId, status) {
-  const tasks = await Task.filterByStatus(userId, status);
-  return tasks;
-}
-
-async function tasksFilteredPriority(userId, priority) {
-  const tasks = await Task.filterByPriority(userId, priority);
-  return tasks;
-}
-
-async function sortUserTasks(userId, sort, order) {
-  const tasks = await Task.sortTasks(userId, sort, order);
-  return tasks;
-}
-
-async function getAllTask(userId, options) {
+async function getAllTasks(userId, options) {
   const { tasks, total } = await Task.findAll(userId, options);
   const { limit = 10 } = options;
   return { tasks, totalPages: Math.ceil(total / limit) };
@@ -76,13 +51,8 @@ async function getAllTask(userId, options) {
 
 export default {
   addTask,
-  getAllTasks,
   getTaskById,
   updateTask,
   deleteTask,
-  searchTasks,
-  tasksFilteredStatus,
-  tasksFilteredPriority,
-  sortUserTasks,
-  getAllTask,
+  getAllTasks,
 };
