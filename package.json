@@ -5,9 +5,10 @@
   "license": "ISC",
   "author": "Moch. Minanur Rahman",
   "type": "module",
-  "main": "index.js",
+  "main": "src/server.mjs",
   "scripts": {
-    "start": "nodemon src/index.js",
+    "start": "node src/server.mjs",
+    "dev": "nodemon src/server.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
