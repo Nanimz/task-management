@@ -116,10 +116,14 @@ const Task = {
 
   async sortTasks(userId, sort = "created_at", order = "desc") {
     const direction = order === "asc" ? "ASC" : "DESC";
+    const orderExpr =
+      sort === "priority"
+        ? "CASE priority WHEN 'low' THEN 1 WHEN 'medium' THEN 2 WHEN 'high' THEN 3 END"
+        : sort;
     const SQLQuery = `
       SELECT * FROM tasks
       WHERE user_id = $1
-      ORDER BY ${sort} ${direction}
+      ORDER BY ${orderExpr} ${direction}
     `;
     const result = await db.query(SQLQuery, [userId]);
     return result.rows;
