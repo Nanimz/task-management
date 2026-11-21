@@ -102,26 +102,26 @@ const Task = {
 
     const where = conditions.join(" AND ");
 
-    const direction = "asc" ? "ASC" : "DESC";
+    const direction = order === "asc" ? "ASC" : "DESC";
     const orderExpr =
       sortBy === "priority"
         ? "CASE priority WHEN 'low' THEN 1 WHEN 'medium' THEN 2 WHEN 'high' THEN 3 END"
         : sortBy;
 
     const countResult = await db.query(
-      "SELECT COUNT(*) FROM tasks WHERE ${where}",
+      `SELECT COUNT(*) FROM tasks WHERE ${where}`,
       values,
     );
 
-    const total = Number(countResult[0].count);
+    const total = Number(countResult.rows[0].count);
 
-    const offset = (page - 1) * limits;
+    const offset = (page - 1) * limit;
     const dataValues = [...values, limit, offset];
     const result = await db.query(
       `
         SELECT * FROM tasks
         WHERE ${where}
-        ORDERY BY ${orderExpr} ${direction}, id ASC
+        ORDER BY ${orderExpr} ${direction}, id ASC
         LIMIT $${values.length + 1} OFFSET $${values.length + 2}`,
       dataValues,
     );
