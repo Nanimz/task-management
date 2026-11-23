@@ -72,4 +72,35 @@ describe("Authentication - Register", () => {
     });
     expect(userService.register).not.toHaveBeenCalled();
   });
+
+  test("should register user successfully", async () => {
+    const req = mockRequest({
+      name: "Nanimz",
+      email: "nanimz@example.com",
+      password: "password123",
+    });
+
+    const res = mockResponse();
+
+    const mockUser = {
+      id: 1,
+      name: "Nanimz",
+      email: "nanimz@example.com",
+    };
+
+    userService.register.mockResolvedValue(mockUser);
+
+    await authController.register(req, res);
+
+    expect(userService.register).toHaveBeenCalledWith(
+      "Nanimz",
+      "nanimz@example.com",
+      "password123",
+    );
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Registrasi berhasil",
+      data: mockUser,
+    });
+  });
 });
