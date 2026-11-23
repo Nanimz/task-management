@@ -38,4 +38,21 @@ describe("Authentication - Register", () => {
     });
     expect(userService.register).not.toHaveBeenCalled();
   });
+
+  test("should return 400 if email is missing", async () => {
+    const req = mockRequest({
+      name: "Nanimz",
+      password: "password123",
+    });
+
+    const res = mockResponse();
+
+    await authController.register(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "name, email, dan password wajib diisi !",
+    });
+    expect(userService.register).not.toHaveBeenCalled();
+  });
 });
