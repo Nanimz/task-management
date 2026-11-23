@@ -103,4 +103,32 @@ describe("Authentication - Register", () => {
       data: mockUser,
     });
   });
+
+  test("should return 409 if email already exists", async () => {
+    const req = mockRequest({
+      name: "Nanimz",
+      email: "nanimz@example.com",
+      password: "password123",
+    });
+
+    const res = mockResponse();
+
+    const error = new Error("Email sudah terdaftar");
+    error.statusCode = 409;
+
+    userService.register.mockRejectedValue(error);
+
+    await authController.register(req, res);
+
+    expect(userService.register).toHaveBeenCalledWith(
+      "Nanimz",
+      "nanimz@example.com",
+      "password123",
+    );
+
+    expect(res.status).toHaveBeenCalledWith(409);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Email sudah terdaftar",
+    });
+  });
 });
