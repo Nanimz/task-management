@@ -131,4 +131,25 @@ describe("Authentication - Register", () => {
       message: "Email sudah terdaftar",
     });
   });
+
+  test("should return 500 if server error occurs", async () => {
+    const req = mockRequest({
+      name: "Nanimz",
+      email: "nanimz@example.com",
+      password: "password123",
+    });
+
+    const res = mockResponse();
+
+    userService.register.mockRejectedValue(
+      new Error("Database connection failed"),
+    );
+
+    await authController.register(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Terjadi kesalahan pada server",
+    });
+  });
 });
