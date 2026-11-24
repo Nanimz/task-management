@@ -805,3 +805,41 @@ Mengembalikan task yang baru dihapus. Response ini tidak memiliki field `message
 | 401    | Autentikasi gagal                        | Lihat [Error Autentikasi](#error-autentikasi) |
 | 404    | Task tidak ada, atau milik pengguna lain | `Task tidak ditemukan`                        |
 | 500    | Kesalahan server                         | `Terjadi kesalahan pada server`               |
+
+---
+
+## Lampiran
+
+### Model User
+
+| Field      | Tipe              | Keterangan               |
+| ---------- | ----------------- | ------------------------ |
+| id         | integer           | Auto-increment           |
+| name       | string            | Maks. 100 karakter       |
+| email      | string            | Unik, maks. 255 karakter |
+| created_at | string (ISO 8601) | Waktu dibuat             |
+| updated_at | string (ISO 8601) | Waktu terakhir diubah    |
+
+Field `password` tidak pernah dikembalikan di response.
+
+### Model Task
+
+| Field       | Tipe              | Keterangan                             |
+| ----------- | ----------------- | -------------------------------------- |
+| id          | integer           | Auto-increment                         |
+| user_id     | integer           | ID pemilik task                        |
+| title       | string            | Maks. 150 karakter                     |
+| description | string \| null    | Teks bebas                             |
+| status      | string            | Lihat enum di bawah. Default `pending` |
+| priority    | string            | Lihat enum di bawah. Default `medium`  |
+| due_date    | string            | Tanggal `YYYY-MM-DD`                   |
+| created_at  | string (ISO 8601) | Waktu dibuat                           |
+| updated_at  | string (ISO 8601) | Waktu terakhir diubah                  |
+
+### Enum
+
+| Field              | Nilai                                                       |
+| ------------------ | ----------------------------------------------------------- |
+| status             | `pending`, `in_progress`, `completed`                       |
+| priority           | `low`, `medium`, `high`                                     |
+| sortBy (Get Tasks) | `created_at`, `updated_at`, `due_date`, `title`, `priority` |
