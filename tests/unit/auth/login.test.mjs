@@ -52,4 +52,33 @@ describe("Authentication - Login", () => {
     });
     expect(userService.login).not.toHaveBeenCalled();
   });
+
+  test("should return 200 and tokens if login is successfull", async () => {
+    userService.login.mockResolvedValue({
+      accessToken: "access-token-xyz",
+      refreshToken: "refresh-token-123",
+    });
+
+    const req = mockRequest({
+      email: "nanimz@example.com",
+      password: "password123",
+    });
+
+    const res = mockResponse();
+
+    await authController.login(req, res);
+
+    expect(userService.login).toHaveBeenCalledWith(
+      "nanimz@example.com",
+      "password123",
+    );
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Login berhasil",
+      data: {
+        accessToken: "access-token-xyz",
+        refreshToken: "refresh-token-123",
+      },
+    });
+  });
 });
