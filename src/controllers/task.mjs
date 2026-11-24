@@ -147,7 +147,7 @@ async function updateTaskDetail(req, res) {
 
     const err = validateTask(req.body, { partial: true });
     if (err) {
-      res.status(400).json({ success: false, message: err });
+      return res.status(400).json({ success: false, message: err });
     }
 
     const { title, description, status, priority, due_date } = req.body;
@@ -160,7 +160,7 @@ async function updateTaskDetail(req, res) {
     });
 
     return res
-      .status(201)
+      .status(200)
       .json({ success: true, message: "Task berhasil diupdate", data: task });
   } catch (error) {
     return res.status(error.statusCode || 500).json({
