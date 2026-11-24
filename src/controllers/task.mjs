@@ -147,7 +147,7 @@ async function updateTaskDetail(req, res) {
 
     const err = validateTask(req.body, { partial: true });
     if (err) {
-      res.status(400).json({ success: false, message: err });
+      return res.status(400).json({ success: false, message: err });
     }
 
     const { title, description, status, priority, due_date } = req.body;
