@@ -7,13 +7,19 @@ async function register(req, res) {
     if (!name || !email || !password) {
       return res
         .status(400)
-        .json({ message: "name, email, dan password wajib diisi !" });
+        .json({
+          success: false,
+          message: "name, email, dan password wajib diisi !",
+        });
     }
 
     const user = await userService.register(name, email, password);
-    return res.status(200).json({ message: "Registrasi berhasil", data: user });
+    return res
+      .status(200)
+      .json({ success: true, essage: "Registrasi berhasil", data: user });
   } catch (error) {
     return res.status(error.statusCode || 500).json({
+      success: false,
       message: error.statusCode
         ? error.message
         : "Terjadi kesalahan pada server",
@@ -27,7 +33,7 @@ async function login(req, res) {
     if (!email || !password) {
       return res
         .status(400)
-        .json({ message: "Email dan password harus diisi!" });
+        .json({ success: false, message: "Email dan password harus diisi!" });
     }
 
     const { accessToken, refreshToken } = await userService.login(
@@ -36,9 +42,14 @@ async function login(req, res) {
     );
     return res
       .status(200)
-      .json({ message: "Login berhasil", data: { accessToken, refreshToken } });
+      .json({
+        success: true,
+        message: "Login berhasil",
+        data: { accessToken, refreshToken },
+      });
   } catch (error) {
     return res.status(error.statusCode || 500).json({
+      success: false,
       message: error.statusCode
         ? error.message
         : "Terjadi kesalahan pada server",
@@ -52,7 +63,7 @@ async function refresh(req, res) {
     if (!refreshToken) {
       return res
         .status(400)
-        .json({ status: false, message: "Refresh token wajib diisi" });
+        .json({ success: false, message: "Refresh token wajib diisi" });
     }
     const data = await tokenService.refresh(refreshToken);
     return res.status(200).json({ success: true, data });
@@ -75,7 +86,7 @@ async function logout(req, res) {
     await tokenService.logout(refreshToken);
     return res.status(200).json({ success: true, message: "Logout berhasil" });
   } catch (error) {
-    return res.status(error.statusCode).json({
+    return res.status(error.statusCode || 500).json({
       success: false,
       message: error.statusCode ? error.message : "Terjadi kesalahan di server",
     });
