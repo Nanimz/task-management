@@ -9,6 +9,11 @@
   - [Login](#login)
   - [Refresh Token](#refresh-token)
   - [Logout](#logout)
+- [Users](#users)
+  - [Get Profile](#get-profile)
+  - [Update Profile](#update-profile)
+  - [Change Password](#change-password)
+  - [Delete Account](#delete-account)
 
 ---
 
@@ -69,6 +74,7 @@ Catatan:
 | 200    | Berhasil                                                 |
 | 400    | Request tidak valid (field wajib kosong, dll.)           |
 | 401    | Tidak terautentikasi / kredensial atau token tidak valid |
+| 404    | Data tidak ditemukan                                     |
 | 409    | Konflik data (misalnya email sudah terdaftar)            |
 | 500    | Kesalahan server                                         |
 
@@ -262,3 +268,196 @@ Mencabut refresh token sehingga tidak bisa dipakai lagi.
 | ------ | --------------------- | ----------------------------- |
 | 401    | `refreshToken` kosong | `Refresh token wajib ada`     |
 | 500    | Kesalahan server      | `Terjadi kesalahan di server` |
+
+---
+
+## Users
+
+Semua endpoint di grup ini **wajib** memakai header `Authorization: Bearer <accessToken>`. Pengguna yang dimaksud adalah pemilik token, sehingga tidak ada `:id` di path.
+
+### Get Profile
+
+Mengambil profil pengguna yang sedang login.
+
+`GET /api/v1/users/me`
+
+**Auth:** Bearer token
+
+**Response Sukses: 200 OK**
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "name": "Budi Santoso",
+    "email": "budi@example.com",
+    "created_at": "2026-11-24T08:00:00.000Z",
+    "updated_at": "2026-11-24T08:00:00.000Z"
+  }
+}
+```
+
+**Response Error**
+
+| Status | Kondisi                                        | Message                         |
+| ------ | ---------------------------------------------- | ------------------------------- |
+| 401    | Token tidak ada, tidak valid, atau kedaluwarsa | (menunggu middleware)           |
+| 404    | Akun sudah dihapus tetapi token masih berlaku  | `User tidak ditemukan`          |
+| 500    | Kesalahan server                               | `Terjadi kesalahan pada server` |
+
+---
+
+### Update Profile
+
+Mengubah nama dan/atau email. Kirim hanya field yang ingin diubah.
+
+`PATCH /api/v1/users/me`
+
+**Auth:** Bearer token
+
+**Request Body**
+
+| Field | Tipe   | Wajib      | Keterangan                                                          |
+| ----- | ------ | ---------- | ------------------------------------------------------------------- |
+| name  | string | Salah satu | Tidak boleh kosong atau hanya spasi. Maks. 100 karakter             |
+| email | string | Salah satu | Tidak boleh kosong atau hanya spasi. Harus unik. Maks. 255 karakter |
+
+Minimal salah satu dari `name` atau `email` harus dikirim. Field yang tidak dikirim (atau bernilai `null`) tidak diubah.
+
+**Contoh Request**
+
+```json
+{
+  "name": "Budi S."
+}
+```
+
+**Response Sukses: 200 OK**
+
+```json
+{
+  "success": true,
+  "message": "Profil berhasil diperbarui",
+  "data": {
+    "id": 1,
+    "name": "Budi S.",
+    "email": "budi@example.com",
+    "created_at": "2026-11-24T08:00:00.000Z",
+    "updated_at": "2026-11-25T09:30:00.000Z"
+  }
+}
+```
+
+**Response Error**
+
+| Status | Kondisi                                                              | Message                                               |
+| ------ | -------------------------------------------------------------------- | ----------------------------------------------------- |
+| 400    | `name` dan `email` sama-sama tidak dikirim                           | `Minimal salah satu dari nama atau email harus diisi` |
+| 400    | `name` kosong atau hanya spasi                                       | `name tidak boleh kosong`                             |
+| 400    | `email` kosong atau hanya spasi                                      | `email tidak boleh kosong`                            |
+| 401    | Token tidak ada, tidak valid, atau kedaluwarsa                       | (menunggu middleware)                                 |
+| 404    | Akun tidak ditemukan                                                 | `User tidak ditemukan`                                |
+| 409    | Email sudah dipakai pengguna lain                                    | `Email sudah digunakan`                               |
+| 500    | `name` > 100 karakter, `email` > 255 karakter, atau kesalahan server | `Terjadi kesalahan di server`                         |
+
+---
+
+### Change Password
+
+Mengganti password. Wajib menyertakan password lama.
+
+`PATCH /api/v1/users/me/password`
+
+**Auth:** Bearer token
+
+**Request Body**
+
+| Field       | Tipe   | Wajib | Keterangan         |
+| ----------- | ------ | ----- | ------------------ |
+| oldPassword | string | Ya    | Password saat ini  |
+| newPassword | string | Ya    | Minimal 8 karakter |
+
+**Contoh Request**
+
+```json
+{
+  "oldPassword": "rahasia123",
+  "newPassword": "passwordBaru456"
+}
+```
+
+**Response Sukses: 200 OK**
+
+```json
+{
+  "success": true,
+  "message": "Password berhasil diperbarui"
+}
+```
+
+**Catatan:** Refresh token dan access token yang sudah terbit **tidak dicabut** setelah password berubah. Keduanya tetap berlaku sampai kedaluwarsa atau dipakai.
+
+**Response Error**
+
+| Status | Kondisi                                        | Message                         |
+| ------ | ---------------------------------------------- | ------------------------------- |
+| 400    | `oldPassword` atau `newPassword` kosong        | `Password harus diisi`          |
+| 400    | `oldPassword` atau `newPassword` bukan string  | `Password harus berupa teks`    |
+| 400    | `newPassword` kurang dari 8 karakter           | `Password minimal 8 karakter`   |
+| 400    | `oldPassword` tidak cocok                      | `Old password salah`            |
+| 401    | Token tidak ada, tidak valid, atau kedaluwarsa | (menunggu middleware)           |
+| 404    | Akun tidak ditemukan                           | `User tidak ditemukan`          |
+| 500    | Kesalahan server                               | `Terjadi kesalahan pada server` |
+
+---
+
+### Delete Account
+
+Menghapus akun secara permanen. Wajib menyertakan password untuk konfirmasi.
+
+`DELETE /api/v1/users/me`
+
+**Auth:** Bearer token
+
+**Request Body**
+
+| Field    | Tipe   | Wajib | Keterangan             |
+| -------- | ------ | ----- | ---------------------- |
+| password | string | Ya    | Password akun saat ini |
+
+> Endpoint ini membaca `password` dari **request body** meskipun memakai method DELETE. Pastikan klien HTTP Anda mengirim body pada DELETE.
+
+**Contoh Request**
+
+```json
+{
+  "password": "rahasia123"
+}
+```
+
+**Response Sukses: 200 OK**
+
+```json
+{
+  "success": true,
+  "message": "Data user berhasil dihapus",
+  "data": {
+    "id": 1,
+    "name": "Budi Santoso",
+    "email": "budi@example.com"
+  }
+}
+```
+
+**Catatan:** Penghapusan akun ikut menghapus **semua task** dan **semua refresh token** milik pengguna tersebut (`ON DELETE CASCADE`). Tindakan ini tidak bisa dibatalkan.
+
+**Response Error**
+
+| Status | Kondisi                                        | Message                         |
+| ------ | ---------------------------------------------- | ------------------------------- |
+| 400    | `password` kosong                              | `Password harus diisi`          |
+| 400    | `password` tidak cocok                         | `Password salah`                |
+| 401    | Token tidak ada, tidak valid, atau kedaluwarsa | (menunggu middleware)           |
+| 404    | Akun tidak ditemukan                           | `User tidak ditemukan`          |
+| 500    | Kesalahan server                               | `Terjadi kesalahan pada server` |
