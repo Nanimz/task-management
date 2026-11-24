@@ -52,7 +52,7 @@ async function refresh(req, res) {
     if (!refreshToken) {
       return res
         .status(400)
-        .json({ status: false, message: "Refresh token wajib diisi" });
+        .json({ success: false, message: "Refresh token wajib diisi" });
     }
     const data = await tokenService.refresh(refreshToken);
     return res.status(200).json({ success: true, data });
