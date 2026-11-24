@@ -5,18 +5,16 @@ async function register(req, res) {
   try {
     const { name, email, password } = req.body;
     if (!name || !email || !password) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "name, email, dan password wajib diisi !",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "name, email, dan password wajib diisi !",
+      });
     }
 
     const user = await userService.register(name, email, password);
     return res
       .status(200)
-      .json({ success: true, essage: "Registrasi berhasil", data: user });
+      .json({ success: true, message: "Registrasi berhasil", data: user });
   } catch (error) {
     return res.status(error.statusCode || 500).json({
       success: false,
@@ -40,13 +38,11 @@ async function login(req, res) {
       email,
       password,
     );
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: "Login berhasil",
-        data: { accessToken, refreshToken },
-      });
+    return res.status(200).json({
+      success: true,
+      message: "Login berhasil",
+      data: { accessToken, refreshToken },
+    });
   } catch (error) {
     return res.status(error.statusCode || 500).json({
       success: false,
