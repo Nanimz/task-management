@@ -48,7 +48,9 @@ async function updateUserProfile(req, res) {
   } catch (error) {
     return res.status(error.statusCode || 500).json({
       success: false,
-      message: error.statusCode ? error.message : "Terjadi kesalahan di server",
+      message: error.statusCode
+        ? error.message
+        : "Terjadi kesalahan pada server",
     });
   }
 }
