@@ -82,6 +82,26 @@ describe("Authentication - Login", () => {
     });
   });
 
+  test("should return 401 if credentials are invalid", async () => {
+    const error = new Error("Email atau password salah");
+    error.statusCode = 401;
+    userService.login.mockRejectedValue(error);
+
+    const req = mockRequest({
+      email: "nanimz@gmail.com",
+      password: "password321",
+    });
+
+    const res = mockResponse();
+
+    await authController.login(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(401);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Email atau password salah",
+    });
+  });
+
   test("should return 500 if unexpected server error occurs", async () => {
     userService.login.mockRejectedValue(new Error("Connection failed"));
 
