@@ -9,7 +9,8 @@
   "scripts": {
     "start": "node src/server.mjs",
     "dev": "nodemon src/server.mjs",
-    "test": "node --disable-warning=ExperimentalWarning --experimental-vm-modules ./node_modules/jest/bin/jest.js"
+    "test": "node --disable-warning=ExperimentalWarning --experimental-vm-modules ./node_modules/jest/bin/jest.js",
+    "test:coverage": "node --disable-warning=ExperimentalWarning --experimental-vm-modules ./node_modules/jest/bin/jest.js --coverage"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
