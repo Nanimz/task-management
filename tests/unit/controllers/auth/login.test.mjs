@@ -1,14 +1,15 @@
 import { jest, describe, test, expect } from "@jest/globals";
 
-jest.unstable_mockModule("../../../src/service/user.mjs", () => ({
+jest.unstable_mockModule("../../../../src/service/user.mjs", () => ({
   default: {
     login: jest.fn(),
   },
 }));
 
-const { default: userService } = await import("../../../src/service/user.mjs");
+const { default: userService } =
+  await import("../../../../src/service/user.mjs");
 const { default: authController } =
-  await import("../../../src/controllers/auth.mjs");
+  await import("../../../../src/controllers/auth.mjs");
 
 function mockRequest(body = {}) {
   return { body };
