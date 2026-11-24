@@ -37,4 +37,19 @@ describe("Authentication - Login", () => {
     });
     expect(userService.login).not.toHaveBeenCalled();
   });
+
+  test("should return 400 if password is missing", async () => {
+    const req = mockRequest({
+      email: "nanimz@example.com",
+    });
+
+    const res = mockResponse();
+
+    await authController.login(req, res);
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Email dan password harus diisi!",
+    });
+    expect(userService.login).not.toHaveBeenCalled();
+  });
 });
