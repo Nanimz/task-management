@@ -76,4 +76,22 @@ describe("Authentication - Refresh Token", () => {
       message: "Refresh token tidak valid atau kadaluarsa",
     });
   });
+
+  test("should return 500 if unexpected server error occurs", async () => {
+    tokenService.refresh.mockRejectedValue(new Error("Connection failed"));
+
+    const req = mockRequest({
+      refreshToken: "refresh-token-123",
+    });
+
+    const res = mockResponse();
+
+    await authController.refresh(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: "Terjadi kesalahan di server",
+    });
+  });
 });
