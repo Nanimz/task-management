@@ -1,4 +1,5 @@
 import { jest, describe, test, expect } from "@jest/globals";
+import refreshTokens from "../../../../src/models/refreshTokens.mjs";
 
 jest.unstable_mockModule("../../../../src/service/refreshTokens.mjs", () => ({
   default: {
@@ -35,5 +36,24 @@ describe("Authentication - Refresh Token", () => {
       message: "Refresh token wajib diisi",
     });
     expect(tokenService.refresh).not.toHaveBeenCalled();
+  });
+
+  test("should return 200 and tokens if refresh is successful", async () => {
+    tokenService.refresh.mockResolvedValue("refresh-token-123");
+
+    const req = mockRequest({
+      refreshToken: "refresh-token-123",
+    });
+    const res = mockResponse();
+
+    await authController.refresh(req, res);
+
+    expect(tokenService.refresh).toHaveBeenCalledWith("refresh-token-123");
+    expect(tokenService.refresh).toHaveBeenCalledTimes(1);
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      success: true,
+      data: "refresh-token-123",
+    });
   });
 });
