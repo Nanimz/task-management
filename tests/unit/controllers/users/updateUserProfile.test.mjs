@@ -12,7 +12,7 @@ const { default: userController } =
   await import("../../../../src/controllers/user.mjs");
 
 function mockRequest({ body = {}, user = {} } = {}) {
-  return { body };
+  return { body, user };
 }
 
 function mockResponse() {
@@ -99,5 +99,39 @@ describe("User Controller - Update Profile", () => {
       message: "email tidak boleh kosong",
     });
     expect(userService.updateProfile).not.toHaveBeenCalled();
+  });
+
+  test("should return 200 update profile success", async () => {
+    const mockUser = {
+      name: "Nanimz",
+      email: "nanimz@example.com",
+    };
+    userService.updateProfile.mockResolvedValue(mockUser);
+
+    const req = mockRequest({
+      body: {
+        name: "Nanimz",
+        email: "nanimz@example.com",
+      },
+      user: {
+        id: 1,
+      },
+    });
+    const res = mockResponse();
+
+    await userController.updateUserProfile(req, res);
+
+    expect(userService.updateProfile).toHaveBeenCalledWith(
+      1,
+      "Nanimz",
+      "nanimz@example.com",
+    );
+    expect(userService.updateProfile).toHaveBeenCalledTimes(1);
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      success: true,
+      message: "Profil berhasil diperbarui",
+      data: mockUser,
+    });
   });
 });
