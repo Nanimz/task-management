@@ -134,4 +134,31 @@ describe("User Controller - Update Profile", () => {
       data: mockUser,
     });
   });
+
+  test("should return 409 if email updated email already registered", async () => {
+    const error = new Error("Email sudah digunakan");
+    error.statusCode = 409;
+    userService.updateProfile.mockRejectedValue(error);
+
+    const req = mockRequest({
+      body: {
+        name: "Nanimz",
+        email: "nanimz@example.com",
+      },
+      user: {
+        id: 1,
+      },
+    });
+
+    const res = mockResponse();
+
+    await userController.updateUserProfile(req, res);
+
+    expect(userService.updateProfile).toHaveBeenCalledTimes(1);
+    expect(res.status).toHaveBeenCalledWith(409);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: "Email sudah digunakan",
+    });
+  });
 });
