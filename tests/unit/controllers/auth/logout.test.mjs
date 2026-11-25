@@ -56,4 +56,22 @@ describe("Authentication - Logout", () => {
       message: "Refresh token tidak valid atau kadaluarsa",
     });
   });
+
+  test("should return 200 user logout successful", async () => {
+    tokenService.logout.mockResolvedValue(undefined);
+
+    const req = mockRequest({
+      refreshToken: "refresh-token-123",
+    });
+    const res = mockResponse();
+
+    await authController.logout(req, res);
+
+    expect(tokenService.logout).toHaveBeenCalledWith("refresh-token-123");
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      success: true,
+      message: "Logout berhasil",
+    });
+  });
 });
