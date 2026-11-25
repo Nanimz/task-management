@@ -161,4 +161,29 @@ describe("User Controller - Update Profile", () => {
       message: "Email sudah digunakan",
     });
   });
+
+  test("should return 500 if server error occurs", async () => {
+    userService.updateProfile.mockRejectedValue(new Error("Connection failed"));
+
+    const req = mockRequest({
+      body: {
+        name: "Nanimz",
+        email: "Nanimz@exmaple.com",
+      },
+      user: {
+        id: 1,
+      },
+    });
+
+    const res = mockResponse();
+
+    await userController.updateUserProfile(req, res);
+
+    expect(userService.updateProfile).toHaveBeenCalledTimes(1);
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: "Terjadi kesalahan pada server",
+    });
+  });
 });
