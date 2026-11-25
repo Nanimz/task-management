@@ -38,4 +38,20 @@ describe("User Controller - Update Profile", () => {
     });
     expect(userService.updateProfile).not.toHaveBeenCalled();
   });
+
+  test("should return 400 if email is missing", async () => {
+    const req = mockRequest({
+      name: "Nanimz",
+    });
+    const res = mockResponse();
+
+    await userController.updateUserProfile(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: "Minimal salah satu dari nama atau email harus diisi",
+    });
+    expect(userService.updateProfile).not.toHaveBeenCalled();
+  });
 });
