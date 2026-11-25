@@ -45,4 +45,30 @@ describe("User Controller - Get Profile", () => {
       message: "User tidak ditemukan",
     });
   });
+
+  test("should return 200 get profil success", async () => {
+    const mockUser = {
+      id: 1,
+      name: "Nanimz",
+      email: "nanimz@example.com",
+    };
+
+    userService.getProfile.mockResolvedValue(mockUser);
+
+    const req = mockRequest({
+      user: {
+        id: 1,
+      },
+    });
+    const res = mockResponse();
+
+    await userController.getMe(req, res);
+
+    expect(userService.getProfile).toHaveBeenCalledTimes(1);
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      success: true,
+      data: mockUser,
+    });
+  });
 });
