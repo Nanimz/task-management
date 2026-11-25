@@ -91,7 +91,7 @@ describe("Authentication - Refresh Token", () => {
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: "Terjadi kesalahan di server",
+      message: "Terjadi kesalahan pada server",
     });
   });
 });
