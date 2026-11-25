@@ -71,4 +71,24 @@ describe("User Controller - Get Profile", () => {
       data: mockUser,
     });
   });
+
+  test("should return 500 if server error occurs", async () => {
+    userService.getProfile.mockRejectedValue(new Error("Connection failed"));
+
+    const req = mockRequest({
+      user: {
+        id: 1,
+      },
+    });
+    const res = mockResponse();
+
+    await userController.getMe(req, res);
+
+    expect(userService.getProfile).toHaveBeenCalledTimes(1);
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: "Terjadi kesalahan pada server",
+    });
+  });
 });
