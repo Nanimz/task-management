@@ -77,4 +77,27 @@ describe("User Controller - Update Profile", () => {
     });
     expect(userService.updateProfile).not.toHaveBeenCalled();
   });
+
+  test("should return 400 if email value is empty", async () => {
+    const req = mockRequest({
+      body: {
+        name: "Nanimz",
+        email: "",
+      },
+      user: {
+        id: 1,
+      },
+    });
+
+    const res = mockResponse();
+
+    await userController.updateUserProfile(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: "email tidak boleh kosong",
+    });
+    expect(userService.updateProfile).not.toHaveBeenCalled();
+  });
 });
