@@ -35,6 +35,7 @@ describe("Authentication - Register", () => {
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
+      success: false,
       message: "name, email, dan password wajib diisi !",
     });
     expect(userService.register).not.toHaveBeenCalled();
@@ -52,6 +53,7 @@ describe("Authentication - Register", () => {
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
+      success: false,
       message: "name, email, dan password wajib diisi !",
     });
     expect(userService.register).not.toHaveBeenCalled();
@@ -69,6 +71,7 @@ describe("Authentication - Register", () => {
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
+      success: false,
       message: "name, email, dan password wajib diisi !",
     });
     expect(userService.register).not.toHaveBeenCalled();
@@ -100,6 +103,7 @@ describe("Authentication - Register", () => {
     );
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
+      success: true,
       message: "Registrasi berhasil",
       data: mockUser,
     });
@@ -129,6 +133,7 @@ describe("Authentication - Register", () => {
 
     expect(res.status).toHaveBeenCalledWith(409);
     expect(res.json).toHaveBeenCalledWith({
+      success: false,
       message: "Email sudah terdaftar",
     });
   });
@@ -150,6 +155,7 @@ describe("Authentication - Register", () => {
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
+      success: false,
       message: "Terjadi kesalahan pada server",
     });
   });

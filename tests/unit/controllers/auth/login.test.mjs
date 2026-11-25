@@ -34,6 +34,7 @@ describe("Authentication - Login", () => {
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
+      success: false,
       message: "Email dan password harus diisi!",
     });
     expect(userService.login).not.toHaveBeenCalled();
@@ -49,6 +50,7 @@ describe("Authentication - Login", () => {
     await authController.login(req, res);
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
+      success: false,
       message: "Email dan password harus diisi!",
     });
     expect(userService.login).not.toHaveBeenCalled();
@@ -75,6 +77,7 @@ describe("Authentication - Login", () => {
     );
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
+      success: true,
       message: "Login berhasil",
       data: {
         accessToken: "access-token-xyz",
@@ -99,6 +102,7 @@ describe("Authentication - Login", () => {
 
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({
+      success: false,
       message: "Email atau password salah",
     });
   });
@@ -122,6 +126,7 @@ describe("Authentication - Login", () => {
     expect(userService.login).toHaveBeenCalledTimes(1);
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
+      success: false,
       message: "Terjadi kesalahan pada server",
     });
   });
