@@ -5,4 +5,5 @@ export default {
   testMatch: ["**/tests/**/*.test.mjs"],
   coverageDirectory: "tests/coverage",
   clearMocks: true,
+  verbose: true,
 };

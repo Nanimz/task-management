@@ -9,7 +9,6 @@ async function getMe(req, res) {
       data: user,
     });
   } catch (error) {
-    console.error(error);
     return res.status(error.statusCode || 500).json({
       success: false,
       message: error.statusCode
