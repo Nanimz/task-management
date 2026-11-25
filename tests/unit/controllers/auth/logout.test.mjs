@@ -74,4 +74,21 @@ describe("Authentication - Logout", () => {
       message: "Logout berhasil",
     });
   });
+
+  test("should return 500 if server error occurs", async () => {
+    tokenService.logout.mockRejectedValue(new Error("Connection failed"));
+
+    const req = mockRequest({
+      refreshToken: "refresh-token-123",
+    });
+    const res = mockResponse();
+
+    await authController.logout(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: "Terjadi kesalahan pada server",
+    });
+  });
 });
