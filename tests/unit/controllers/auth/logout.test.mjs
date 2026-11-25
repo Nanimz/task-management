@@ -36,4 +36,24 @@ describe("Authentication - Logout", () => {
     });
     expect(tokenService.logout).not.toHaveBeenCalled();
   });
+
+  test("should return error status and message from service if statusCode exists", async () => {
+    const error = new Error("Refresh token tidak valid atau kadaluarsa");
+    error.statusCode = 401;
+    tokenService.logout.mockRejectedValue(error);
+
+    const req = mockRequest({
+      refreshToken: "refresh-token-123",
+    });
+    const res = mockResponse();
+
+    await authController.logout(req, res);
+
+    expect(tokenService.logout).toHaveBeenCalledWith("refresh-token-123");
+    expect(res.status).toHaveBeenCalledWith(401);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: "Refresh token tidak valid atau kadaluarsa",
+    });
+  });
 });
