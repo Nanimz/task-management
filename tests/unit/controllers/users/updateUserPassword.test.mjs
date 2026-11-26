@@ -178,4 +178,30 @@ describe("User Controller - Change Password", () => {
       message: "User tidak ditemukan",
     });
   });
+
+  test("should return 500 if server error occurs", async () => {
+    userService.changePassword.mockRejectedValue(
+      new Error("Connection failed"),
+    );
+
+    const req = mockRequest({
+      body: {
+        oldPassword: "rahasia123",
+        newPassword: "rahasia321",
+      },
+      user: {
+        id: 2,
+      },
+    });
+    const res = mockResponse();
+
+    await userController.updateUserPassword(req, res);
+
+    expect(userService.changePassword).toHaveBeenCalledTimes(1);
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: "Terjadi kesalahan pada server",
+    });
+  });
 });
