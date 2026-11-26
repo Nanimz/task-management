@@ -43,4 +43,25 @@ describe("User Controller - Change Password", () => {
     });
     expect(userService.changePassword).not.toHaveBeenCalled();
   });
+
+  test("should return 400 if newPassword is missing", async () => {
+    const req = mockRequest({
+      body: {
+        oldPassword: "rahasia123",
+      },
+      user: {
+        id: 1,
+      },
+    });
+    const res = mockResponse();
+
+    await userController.updateUserPassword(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: "Password harus diisi",
+    });
+    expect(userService.changePassword).not.toHaveBeenCalled();
+  });
 });
