@@ -152,4 +152,30 @@ describe("User Controller - Change Password", () => {
       message: "Password berhasil diperbarui",
     });
   });
+
+  test("should return 404 if user is not found", async () => {
+    const error = new Error("User tidak ditemukan");
+    error.statusCode = 404;
+    userService.changePassword.mockRejectedValue(error);
+
+    const req = mockRequest({
+      body: {
+        oldPassword: "rahasia123",
+        newPassword: "rahasia321",
+      },
+      user: {
+        id: 2,
+      },
+    });
+    const res = mockResponse();
+
+    await userController.updateUserPassword(req, res);
+
+    expect(userService.changePassword).toHaveBeenCalledTimes(1);
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: "User tidak ditemukan",
+    });
+  });
 });
