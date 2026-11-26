@@ -139,4 +139,27 @@ describe("User Controller - Delete User", () => {
       message: "Password salah",
     });
   });
+
+  test("should return 500 if server error occurs", async () => {
+    userService.deleteUser.mockRejectedValue(new Error("Connection failed"));
+
+    const req = mockRequest({
+      body: {
+        password: "rahasia123",
+      },
+      user: {
+        id: 1,
+      },
+    });
+    const res = mockResponse();
+
+    await userController.deleteAccount(req, res);
+
+    expect(userService.deleteUser).toHaveBeenCalledTimes(1);
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: "Terjadi kesalahan pada server",
+    });
+  });
 });
