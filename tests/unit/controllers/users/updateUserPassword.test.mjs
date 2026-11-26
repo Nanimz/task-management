@@ -130,4 +130,26 @@ describe("User Controller - Change Password", () => {
     });
     expect(userService.changePassword).not.toHaveBeenCalled();
   });
+
+  test("should return 200 if change password user success", async () => {
+    const req = mockRequest({
+      body: {
+        oldPassword: "rahasia123",
+        newPassword: "rahasia321",
+      },
+      user: {
+        id: 1,
+      },
+    });
+    const res = mockResponse();
+
+    await userController.updateUserPassword(req, res);
+
+    expect(userService.changePassword).toHaveBeenCalledTimes(1);
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      success: true,
+      message: "Password berhasil diperbarui",
+    });
+  });
 });
