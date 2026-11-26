@@ -40,4 +40,23 @@ describe("User Controller - Delete User", () => {
     });
     expect(userService.deleteUser).not.toHaveBeenCalled();
   });
+
+  test("should return 400 if password is missing", async () => {
+    const req = mockRequest({
+      body: {},
+      user: {
+        id: 1,
+      },
+    });
+    const res = mockResponse();
+
+    await userController.deleteAccount(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: "Password harus diisi",
+    });
+    expect(userService.deleteUser).not.toHaveBeenCalled();
+  });
 });
