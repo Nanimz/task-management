@@ -89,4 +89,29 @@ describe("User Controller - Delete User", () => {
       data: mockUser,
     });
   });
+
+  test("should return 404 if user is not found", async () => {
+    const error = new Error("User tidak ditemukan");
+    error.statusCode = 404;
+    userService.deleteUser.mockRejectedValue(error);
+
+    const req = mockRequest({
+      body: {
+        password: "rahasia123",
+      },
+      user: {
+        id: 1,
+      },
+    });
+    const res = mockResponse();
+
+    await userController.deleteAccount(req, res);
+
+    expect(userService.deleteUser).toHaveBeenCalledTimes(1);
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: "User tidak ditemukan",
+    });
+  });
 });
