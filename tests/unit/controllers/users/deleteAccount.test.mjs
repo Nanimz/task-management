@@ -1,4 +1,5 @@
 import { jest, describe, test, expect } from "@jest/globals";
+import { password } from "pg/lib/defaults";
 
 jest.unstable_mockModule("../../../../src/service/user.mjs", () => ({
   default: {
@@ -58,5 +59,34 @@ describe("User Controller - Delete User", () => {
       message: "Password harus diisi",
     });
     expect(userService.deleteUser).not.toHaveBeenCalled();
+  });
+
+  test("should return 200 if delete user success", async () => {
+    const mockUser = {
+      id: 1,
+      name: "Nanimz",
+      email: "nanimz@example.com",
+    };
+    userService.deleteUser.mockResolvedValue(mockUser);
+
+    const req = mockRequest({
+      body: {
+        password: "rahasia123",
+      },
+      user: {
+        id: 1,
+      },
+    });
+    const res = mockResponse();
+
+    await userController.deleteAccount(req, res);
+
+    expect(userService.deleteUser).toHaveBeenCalledTimes(1);
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      success: true,
+      message: "Data user berhasil dihapus",
+      data: mockUser,
+    });
   });
 });
