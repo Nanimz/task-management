@@ -114,4 +114,29 @@ describe("User Controller - Delete User", () => {
       message: "User tidak ditemukan",
     });
   });
+
+  test("should return 400 if password isn't correct", async () => {
+    const error = new Error("Password salah");
+    error.statusCode = 400;
+    userService.deleteUser.mockRejectedValue(error);
+
+    const req = mockRequest({
+      body: {
+        password: "rahasiaabc",
+      },
+      user: {
+        id: 1,
+      },
+    });
+    const res = mockResponse();
+
+    await userController.deleteAccount(req, res);
+
+    expect(userService.deleteUser).toHaveBeenCalledTimes(1);
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: "Password salah",
+    });
+  });
 });
